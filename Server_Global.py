@@ -398,5 +398,7 @@ def list_appointments():
     return Response(json.dumps(result), mimetype = 'application/json')
 
 
+
+
 if __name__ == '__main__':
     app.run()
