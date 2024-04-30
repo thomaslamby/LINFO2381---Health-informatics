@@ -26,9 +26,9 @@ if not 'ehr' in client.listDatabases():
 
 # TODO
 # BEGIN STRIP
-client.installView('ehr', 'appointments', 'by_patient_id', '''
+client.installView('ehr', 'food_journals', 'by_patient_id', '''
 function(doc) {
-if (doc.type == 'appointment') {
+if (doc.type == 'food_journal') {
     emit(doc.patient_id, doc);
   }
 }
@@ -92,16 +92,17 @@ def create_patient():
         
 
 @app.route('/record', methods = [ 'POST' ])
-def record_appointment():
+def record_food_journal():
     body = json.loads(request.get_data())
     now = datetime.datetime.now().isoformat()
 
     client.addDocument('ehr', {
-        'type' : 'appointment',
+        'type' : 'food_journal',
         'patient_id' : body['id'],
-        'appointment_time' : body['appointment_time'],
-        'doctor_name' : body['doctor_name'],
-        'reason' : body['reason'],
+        'meal_time' : body['meal_time'],
+        'meal_type' : body['meal_type'],
+        'food' : body['food'],
+        'calories' : body['calories'],
         'time' : now,
     })
 
@@ -126,19 +127,20 @@ def list_patients():
     return Response(json.dumps(result), mimetype = 'application/json')
         
 
-app.route('/appointments', methods = [ 'GET' ])
-def list_appointments():
+app.route('/food_journals', methods = [ 'GET' ])
+def list_food_journals():
     patientId = request.args.get('id')
     result = []
 
-    appointments = client.executeView('ehr', 'appointments', 'by_patient_id', patientId)
+    food_journals = client.executeView('ehr', 'food_journals', 'by_patient_id', patientId)
 
-    for appointment in appointments:
+    for journal in food_journals:
         result.append({
-            'time' : appointment['time'],
-            'appointment_time' : appointment['appointment_time'],
-            'doctor_name' : appointment['doctor_name'],
-            'reason' : appointment['reason']
+            'time' : journal['time'],
+            'meal_time' : journal['meal_time'],
+            'meal_type' : journal['meal_type'],
+            'food' : journal['food'],
+            'calories' : journal['calories']
         })
 
     return Response(json.dumps(result), mimetype = 'application/json')

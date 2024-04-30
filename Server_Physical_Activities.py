@@ -26,9 +26,9 @@ if not 'ehr' in client.listDatabases():
 
 # TODO
 # BEGIN STRIP
-client.installView('ehr', 'appointments', 'by_patient_id', '''
+client.installView('ehr', 'physical_activities', 'by_patient_id', '''
 function(doc) {
-if (doc.type == 'appointment') {
+if (doc.type == 'physical_activity') {
     emit(doc.patient_id, doc);
   }
 }
@@ -92,16 +92,15 @@ def create_patient():
         
 
 @app.route('/record', methods = [ 'POST' ])
-def record_appointment():
+def record_physical_activity():
     body = json.loads(request.get_data())
     now = datetime.datetime.now().isoformat()
 
     client.addDocument('ehr', {
-        'type' : 'appointment',
+        'type' : 'physical_activity',
         'patient_id' : body['id'],
-        'appointment_time' : body['appointment_time'],
-        'doctor_name' : body['doctor_name'],
-        'reason' : body['reason'],
+        'activity_type' : body['activity_type'],
+        'duration' : body['duration'],
         'time' : now,
     })
 
@@ -126,19 +125,18 @@ def list_patients():
     return Response(json.dumps(result), mimetype = 'application/json')
         
 
-app.route('/appointments', methods = [ 'GET' ])
-def list_appointments():
+app.route('/physical_activities', methods = [ 'GET' ])
+def list_physical_activities():
     patientId = request.args.get('id')
     result = []
 
-    appointments = client.executeView('ehr', 'appointments', 'by_patient_id', patientId)
+    physical_activities = client.executeView('ehr', 'physical_activities', 'by_patient_id', patientId)
 
-    for appointment in appointments:
+    for activity in physical_activities:
         result.append({
-            'time' : appointment['time'],
-            'appointment_time' : appointment['appointment_time'],
-            'doctor_name' : appointment['doctor_name'],
-            'reason' : appointment['reason']
+            'time' : activity['time'],
+            'activity_type' : activity['activity_type'],
+            'duration' : activity['duration']
         })
 
     return Response(json.dumps(result), mimetype = 'application/json')
