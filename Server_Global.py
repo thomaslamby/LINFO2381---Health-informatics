@@ -11,9 +11,9 @@ import json
 
 import CouchDBClient
 
-client = CouchDBClient.CouchDBClient()
+client = CouchDBClient.CouchDBClient(url='http://localhost:5984', username='admin', password='password')
 
-# client.reset()   # If you want to clear the entire content of CouchDB
+client.reset()   # If you want to clear the entire content of CouchDB
 
 if not 'ehr' in client.listDatabases():
     client.createDatabase('ehr')
@@ -294,7 +294,7 @@ def list_temperatures():
 
     return Response(json.dumps(result), mimetype = 'application/json')
 
-app.route('/blood_pressures', methods = [ 'GET' ])
+@app.route('/blood_pressures', methods = [ 'GET' ])
 def list_blood_pressures():
     patientId = request.args.get('id')
     result = []
@@ -313,7 +313,7 @@ def list_blood_pressures():
 
     return Response(json.dumps(result), mimetype = 'application/json')
 
-app.route('/blood_sugars', methods = [ 'GET' ])
+@app.route('/blood_sugars', methods = [ 'GET' ])
 def list_blood_sugars():
     patientId = request.args.get('id')
     result = []
@@ -346,7 +346,7 @@ def list_medications():
         })
     return Response(json.dumps(result), mimetype = 'application/json')
 
-app.route('/food_journals', methods = [ 'GET' ])
+@app.route('/food_journals', methods = [ 'GET' ])
 def list_food_journals():
     patientId = request.args.get('id')
     result = []
@@ -364,7 +364,7 @@ def list_food_journals():
 
     return Response(json.dumps(result), mimetype = 'application/json')
 
-app.route('/physical_activities', methods = [ 'GET' ])
+@app.route('/physical_activities', methods = [ 'GET' ])
 def list_physical_activities():
     patientId = request.args.get('id')
     result = []
@@ -380,7 +380,7 @@ def list_physical_activities():
 
     return Response(json.dumps(result), mimetype = 'application/json')
 
-app.route('/appointments', methods = [ 'GET' ])
+@app.route('/appointments', methods = [ 'GET' ])
 def list_appointments():
     patientId = request.args.get('id')
     result = []
