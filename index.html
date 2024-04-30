@@ -130,6 +130,25 @@
     <button onclick="recordPhysicalActivity()">Record</button>
 </p>
 
+<!-- Record Vaccination -->
+<h2>Record Vaccination</h2>
+<p>
+    <label for="vaccination-patient-select">Choose a patient:</label>
+    <select id="vaccination-patient-select">
+        <!-- Patient data populated dynamically -->
+    </select>
+</p>
+<p>
+    <label for="vaccine-name">Vaccine Name:</label>
+    <input type="text" id="vaccine-name" name="vaccine-name">
+    <label for="vaccine-date">Date:</label>
+    <input type="date" id="vaccine-date" name="vaccine-date">
+    <label for="vaccine-dose">Dose Number:</label>
+    <input type="number" id="vaccine-dose" name="vaccine-dose">
+    <button onclick="recordVaccination()">Record Vaccination</button>
+</p>
+
+
 <!-- Record Appointment -->
 <h2>Record Appointment</h2>
 <p>

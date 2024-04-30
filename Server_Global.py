@@ -11,7 +11,7 @@ import json
 
 import CouchDBClient
 
-client = CouchDBClient.CouchDBClient(url='http://localhost:5984', username='admin', password='password')
+client = CouchDBClient.CouchDBClient()
 
 client.reset()   # If you want to clear the entire content of CouchDB
 
@@ -71,6 +71,14 @@ function(doc) {
 if (doc.type == 'physical_activity') {
     emit(doc.patient_id, doc);
   }
+}
+''')
+
+client.installView('ehr', 'vaccinations', 'by_patient_id', '''
+function(doc) {
+    if (doc.type == 'vaccination') {
+        emit(doc.patient_id, doc);
+    }
 }
 ''')
 
@@ -257,6 +265,23 @@ def record_appointment():
 
     return Response('', 204)
 
+@app.route('/record-vaccination', methods=['POST'])
+def record_vaccination():
+    body = json.loads(request.get_data())
+    now = datetime.datetime.now().isoformat()
+
+    vaccination_id = client.addDocument('ehr', {
+        'type': 'vaccination',
+        'patient_id': body['id'],
+        'vaccine_name': body['vaccine_name'],
+        'date': body['date'],
+        'dose_number': body['dose_number'],
+        'current_state': body.get('current_state', 'default_state'),
+        'remarks': body.get('remarks', '')
+    })
+
+    return Response('', 204)
+
 @app.route('/patients', methods = [ 'GET' ])
 def list_patients():
     result = []
@@ -291,7 +316,6 @@ def list_temperatures():
             'temperature' : temperature['value']['temperature'],
         })
     # END STRIP
-
     return Response(json.dumps(result), mimetype = 'application/json')
 
 @app.route('/blood_pressures', methods = [ 'GET' ])
@@ -397,7 +421,25 @@ def list_appointments():
 
     return Response(json.dumps(result), mimetype = 'application/json')
 
+@app.route('/vaccinations', methods=['GET'])
+def list_vaccinations():
+    patientId = request.args.get('id')
+    result = []
 
+    vaccinations = client.executeView('ehr', 'vaccinations', 'by_patient_id', patientId)
+
+    for vaccination in vaccinations:
+        result.append({
+            'time': vaccination['value']['time'],
+            'current_state': vaccination['value']['current_state'],
+            'transition': vaccination['value'].get('transition', ''),
+            'provider': vaccination['value'].get('provider', ''),
+            'patient_id': vaccination['value']['patient_id'],
+            'participations': vaccination['value'].get('participations', []),
+            'workflow_id': vaccination['value'].get('workflow_id', '')
+        })
+
+    return Response(json.dumps(result), mimetype='application/json')
 
 
 if __name__ == '__main__':

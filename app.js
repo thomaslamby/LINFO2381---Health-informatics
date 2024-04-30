@@ -153,6 +153,35 @@ function recordPhysicalActivity() {
   }
 }
 
+function recordVaccination() {
+    var id = document.getElementById('vaccination-patient-select').value;
+    var vaccineName = document.getElementById('vaccine-name').value;
+    var vaccineDate = document.getElementById('vaccine-date').value;
+    var vaccineDose = document.getElementById('vaccine-dose').value;
+
+    if (!vaccineName || !vaccineDate || !vaccineDose) {
+        alert('Please fill all fields');
+        return;
+    }
+
+    axios.post('/record-vaccination', {
+        id: id,
+        vaccine_name: vaccineName,
+        date: vaccineDate,
+        dose_number: vaccineDose
+    })
+    .then(function(response) {
+        document.getElementById('vaccine-name').value = '';
+        document.getElementById('vaccine-date').value = '';
+        document.getElementById('vaccine-dose').value = '';
+        alert('Vaccination recorded successfully');
+    })
+    .catch(function(error) {
+        console.error("Error recording vaccination:", error);
+        alert('Failed to record vaccination. Check console for details.');
+    });
+}
+
 function recordAppointment() {
   var id = document.getElementById('appointment-patient-select').value;
   var appointmentTime = document.getElementById('appointment-time').value;
@@ -220,8 +249,9 @@ function refreshTemperatures() {
           updateTemperatureChart(labels, temperatures);
       })
       .catch(function(error) {
-          alert('URI /temperatures not properly implemented in Flask');
-      });
+        console.error("Error occurred:", error);
+        alert('Error in processing temperatures. Check console for details.');
+    });
 }
 
 // Update temperature chart
