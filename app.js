@@ -336,6 +336,30 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('display-button').addEventListener('click', displayPatientData);
 });
 
+function displayAppointmentsToday() {
+    axios.get('/api/appointments/today')
+    .then(function(response) {
+        // Display appointments for today
+        var appointmentsTodayDiv = document.getElementById('appointments-today');
+        appointmentsTodayDiv.innerHTML = JSON.stringify(response.data);
+    })
+    .catch(function(error) {
+        console.error('Error retrieving appointments for today:', error);
+    });
+}
+
+function displayAppointmentsWeek() {
+    axios.get('/api/appointments/week')
+    .then(function(response) {
+        // Display appointments for this week
+        var appointmentsWeekDiv = document.getElementById('appointments-week');
+        appointmentsWeekDiv.innerHTML = JSON.stringify(response.data);
+    })
+    .catch(function(error) {
+        console.error('Error retrieving appointments for this week:', error);
+    });
+}
+
 
 // Function to refresh patient data whenever index.html or patient.html is loaded
 function refreshOnPageLoad() {

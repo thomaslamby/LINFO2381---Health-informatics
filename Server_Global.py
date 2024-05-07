@@ -3,6 +3,7 @@
 import datetime
 import json
 from flask import jsonify
+from datetime import datetime, timedelta
 
 
 ##
@@ -98,6 +99,28 @@ function(doc) {
   }
 }
 ''')
+
+# View to query appointments for a specific date
+client.installView('ehr', 'appointments', 'appointments_by_date', '''
+function(doc) {
+    if (doc.type === 'appointment' && doc.appointment_time) {
+        var date = new Date(doc.appointment_time);
+        emit(date.toISOString().substring(0, 10), doc);
+    }
+}
+''')
+
+# View to query appointments within a date range
+client.installView('ehr', 'appointments', 'appointments_by_date_range', '''
+function(doc) {
+    if (doc.type === 'appointment' && doc.appointment_time) {
+        var date = new Date(doc.appointment_time);
+        emit(date.toISOString().substring(0, 10), doc);
+    }
+}
+''')
+
+
 # END STRIP
 
 
@@ -258,7 +281,7 @@ def record_physical_activity():
 @app.route('/record-appointment', methods = [ 'POST' ])
 def record_appointment():
     body = json.loads(request.get_data())
-    now = datetime.datetime.now().isoformat()
+    now = datetime.now().isoformat()
 
     client.addDocument('ehr', {
         'type' : 'appointment',
@@ -598,6 +621,28 @@ def get_client_data():
         return jsonify(data)
     else:
         return "Invalid patient ID", 400
+
+@app.route('/api/appointments/today')
+def get_appointments_today():
+    appointments_today = list_appointments_today()  # Implement this function
+    return jsonify(appointments_today)
+
+@app.route('/api/appointments/week')
+def get_appointments_week():
+    appointments_week = list_appointments_week()  # Implement this function
+    return jsonify(appointments_week)
+
+def list_appointments_today():
+    today = datetime.now().date()
+    appointments_today = client.executeView('ehr', 'appointments', 'appointments_by_date', key=today.isoformat())
+    return appointments_today
+
+def list_appointments_week():
+    today = datetime.now().date()
+    end_of_week = today + timedelta(days=7)
+    appointments_week = client.executeView('ehr', 'appointments', 'appointments_by_date_range')
+    return appointments_week
+
 
 
 if __name__ == '__main__':
