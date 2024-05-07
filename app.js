@@ -37,27 +37,37 @@ function recordTemperature() {
 }
 
 function recordBloodPressure() {
-  var id = document.getElementById('blood-pressure-patient-select').value;
-  var systolic = parseFloat(document.getElementById('systolic').value);
-  var diastolic = parseFloat(document.getElementById('diastolic').value);
-  if (isNaN(systolic) || isNaN(diastolic)) {
-      alert('Not a valid number');
-  } else {
-      axios.post('/record-bloodpressure', {
-          id: id,
-          systolic: systolic,
-          diastolic: diastolic
-      })
-          .then(function(response) {
-              document.getElementById('systolic').value = '';
-              document.getElementById('diastolic').value = '';
-          })
-          .catch(function(error) {
-              alert('URI /record-bloodpressure not properly implemented in Flask');
-          });
+    var id = document.getElementById('blood-pressure-patient-select').value;
+    var systolic = parseFloat(document.getElementById('systolic').value);
+    var diastolic = parseFloat(document.getElementById('diastolic').value);
+    var meanArterialPressure = parseFloat(document.getElementById('mean-arterial-pressure').value);
+    var pulsePressure = parseFloat(document.getElementById('pulse-pressure').value);
+    
+    // Vérification des valeurs numériques
+    if (isNaN(systolic) || isNaN(diastolic) || isNaN(meanArterialPressure) || isNaN(pulsePressure)) {
+        alert('Not a valid number');
+    } else {
+        axios.post('/record-bloodpressure', {
+            id: id,
+            systolic: systolic,
+            diastolic: diastolic,
+            mean_arterial_pressure: meanArterialPressure,
+            pulse_pressure: pulsePressure
+        })
+        .then(function(response) {
+            // Réinitialisation des champs après l'enregistrement réussi
+            document.getElementById('systolic').value = '';
+            document.getElementById('diastolic').value = '';
+            document.getElementById('mean-arterial-pressure').value = '';
+            document.getElementById('pulse-pressure').value = '';
+        })
+        .catch(function(error) {
+            // Gestion des erreurs
+            alert('URI /record-bloodpressure not properly implemented in Flask');
+        });
+    }
   }
-}
-
+  
 function recordBloodSugar() {
   var id = document.getElementById('blood-sugar-patient-select').value;
   var bloodSugarLevel = parseFloat(document.getElementById('blood-sugar-level').value);
@@ -226,33 +236,41 @@ function refreshPatients() {
       });
 }
 
-// Update temperature chart based on selected patient
 function refreshTemperatures() {
-  var id = document.getElementById('temperature-patient-select').value;
-  if (id === '') {
-      console.log('No patient selected');
-      return;
-  }
-  axios.get('/temperatures', {
-      params: {
-          id: id
-      }
-  })
-      .then(function(response) {
-          var data = response.data;
-          var labels = data.map(function(entry) {
-              return entry.time;
-          });
-          var temperatures = data.map(function(entry) {
-              return entry.temperature;
-          });
-          updateTemperatureChart(labels, temperatures);
-      })
-      .catch(function(error) {
+    var id = document.getElementById('temperature-patient-select').value;
+    if (id === '') {
+        console.log('No patient selected');
+        return;
+    }
+  
+    axios.get('/temperatures', {
+        params: {
+            id: id
+        }
+    })
+    .then(function(response) {
+        var data = response.data;
+        // Vérifiez si des données de température existent
+        if (data.length === 0) {
+            console.log('No temperature data available for this patient yet.');
+            // Vous pouvez également informer l'utilisateur que les données ne sont pas disponibles
+            return;
+        }
+  
+        var labels = data.map(function(entry) {
+            return entry.time;
+        });
+        var temperatures = data.map(function(entry) {
+            return entry.temperature;
+        });
+        updateTemperatureChart(labels, temperatures);
+    })
+    .catch(function(error) {
         console.error("Error occurred:", error);
         alert('Error in processing temperatures. Check console for details.');
     });
-}
+  }
+  
 
 // Update temperature chart
 function updateTemperatureChart(labels, temperatures) {
