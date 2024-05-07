@@ -116,6 +116,11 @@ def hello():
 def get_index():
     with open('index.html', 'r') as f:
         return Response(f.read(), mimetype = 'text/html')
+    
+@app.route('/patient.html', methods = [ 'GET' ])
+def get_patient():
+    with open('patient.html', 'r') as f:
+        return Response(f.read(), mimetype = 'text/html')
 
 @app.route('/app.js', methods = [ 'GET' ])
 def get_javascript():
@@ -441,6 +446,20 @@ def list_vaccinations():
 
     return Response(json.dumps(result), mimetype='application/json')
 
+@app.route('/patient/<patient_id>/data/<data_type>', methods=['GET'])
+def get_patient_data(patient_id, data_type):
+    # Votre logique pour récupérer les données médicales spécifiques pour le patient donné
+    # et du type spécifié (température, pression artérielle, etc.)
+    # Vous pouvez utiliser des requêtes à la base de données ou d'autres méthodes pour obtenir ces données
+
+    # Une fois que vous avez les données, vous pouvez les renvoyer au format JSON
+    data = {
+        'patient_id': patient_id,
+        'data_type': data_type,
+        'data': []  # Remplacez ceci par les données réelles récupérées de la base de données
+    }
+
+    return Response(json.dumps(data), mimetype='application/json')
 
 if __name__ == '__main__':
     app.run()

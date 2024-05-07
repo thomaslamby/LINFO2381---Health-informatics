@@ -28,7 +28,7 @@ function recordTemperature() {
       })
           .then(function(response) {
               document.getElementById('temperature').value = '';
-              refreshTemperatures();
+              //refreshTemperatures();
           })
           .catch(function(error) {
               alert('URI /record-temperature not properly implemented in Flask');
@@ -270,82 +270,49 @@ function refreshTemperatures() {
         alert('Error in processing temperatures. Check console for details.');
     });
   }
-  
 
-// Update temperature chart
-function updateTemperatureChart(labels, temperatures) {
-  chart.data.labels = labels;
-  chart.data.datasets[0].data = temperatures;
-  chart.update();
+
+// Function to redirect to patient.html
+function redirectToPatientInfo() {
+    window.location.href = 'patient.html';
 }
 
-function displayPatientData(id) {
-  var template = document.getElementById('display-template-select').value;
-  var displayInfo = document.getElementById('display-info');
-
-  // Clear previous content
-  displayInfo.innerHTML = '';
-
-  // Fetch patient data based on selected template
-  switch (template) {
-      case 'temperature':
-          axios.get('/temperatures?id=' + id)
-              .then(function(response) {
-                  var data = response.data;
-                  var html = '<ul>';
-                  data.forEach(function(entry) {
-                      html += '<li>' + entry.time + ': ' + entry.temperature + '</li>';
-                  });
-                  html += '</ul>';
-                  displayInfo.innerHTML = html;
-              })
-              .catch(function(error) {
-                  console.error('Error fetching temperature data:', error);
-                  displayInfo.innerHTML = 'Error fetching temperature data';
-              });
-          break;
-      // Add similar handling for other templates
-      default:
-          displayInfo.innerHTML = 'No template selected';
-  }
-}
-
-
-
+// Attach redirectToPatientInfo function to the click event of the button
 document.addEventListener('DOMContentLoaded', function() {
-  // Initialize temperature chart
-  chart = new Chart(document.getElementById('temperatures'), {
-      type: 'line',
-      data: {
-          labels: [],
-          datasets: [{
-              label: 'Temperature',
-              data: [],
-              fill: false
-          }]
-      },
-      options: {
-          animation: {
-              duration: 0 // Disable animations
-          },
-          scales: {
-              x: {
-                  ticks: {
-                      // Rotate the X label
-                      maxRotation: 45,
-                      minRotation: 45
-                  }
-              }
-          }
-      }
-  });
+    var redirectButton = document.getElementById('redirect-button');
+    redirectButton.addEventListener('click', redirectToPatientInfo);
+});  
 
-  // Populate select elements with patient data
-  refreshPatients();
+// Function to display patient data based on selected template
+function displayPatientData() {
+    var id = document.getElementById('display-patient-select').value;
+    var template = document.getElementById('display-template-select').value;
+    var displayInfo = document.getElementById('display-info');
 
-  // Add event listeners for select elements
-  var selects = document.querySelectorAll('select[id$="-patient-select"]');
-  selects.forEach(function(select) {
-      select.addEventListener('change', refreshTemperatures);
-  });
+    // Clear previous content
+    displayInfo.innerHTML = '';
+
+    // Fetch patient data based on selected template
+    axios.get('/api/data', {
+        params: {
+            patientId: id,
+            template: template
+        }
+    })
+    .then(function(response) {
+        // Display the received data in the appropriate section of the page
+        displayInfo.innerHTML = response.data;
+    })
+    .catch(function(error) {
+        console.error('Error fetching patient data:', error);
+        displayInfo.innerHTML = 'Error fetching patient data';
+    });
+}
+
+// Add event listener for select elements
+document.addEventListener('DOMContentLoaded', function() {
+    var selects = document.querySelectorAll('select[id$="-patient-select"]');
+    selects.forEach(function(select) {
+        select.addEventListener('change', displayPatientData);
+    });
 });

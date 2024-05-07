@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Medical Data Display</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="app.js"></script>
+</head>
+<body>
+<h1>Medical Data Display</h1>
+
+<!-- Medical Data Display -->
+<h2>Medical Data Display</h2>
+<p>
+    <label for="display-patient-select">Choose a patient:</label>
+    <select id="display-patient-select">
+        <!-- Populate with patient data from server -->
+    </select>
+</p>
+<p>
+    <label for="display-template-select">Choose a template:</label>
+    <select id="display-template-select">
+        <option value="temperature">Temperature</option>
+        <option value="blood-pressure">Blood Pressure</option>
+        <option value="blood-sugar">Blood Sugar</option>
+        <option value="medication">Medication</option>
+        <option value="alimentation">Alimentation</option>
+        <option value="physical-activity">Physical Activity</option>
+        <option value="appointment">Appointment</option>
+    </select>
+</p>
+
+<div id="display-info">
+    <!-- Information for selected template will be displayed here -->
+</div>
+
+</body>
+</html>
