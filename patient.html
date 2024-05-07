@@ -6,7 +6,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <script src="app.js"></script>
 </head>
 <body>
 <h1>Medical Data Display</h1>
@@ -16,7 +15,7 @@
 <p>
     <label for="display-patient-select">Choose a patient:</label>
     <select id="display-patient-select">
-        <!-- Populate with patient data from server -->
+        <!-- Options will be populated dynamically -->
     </select>
 </p>
 <p>
@@ -36,5 +35,12 @@
     <!-- Information for selected template will be displayed here -->
 </div>
 
+<!-- Button to trigger display -->
+<button id="display-button">Display Data</button>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="app.js"></script>
 </body>
 </html>

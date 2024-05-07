@@ -229,7 +229,7 @@ function refreshPatients() {
               });
           });
           // Automatically refresh temperatures after fetching patients
-          refreshTemperatures();
+          //refreshTemperatures();
       })
       .catch(function(error) {
           alert('URI /patients not properly implemented in Flask');
@@ -274,7 +274,16 @@ function refreshTemperatures() {
 
 // Function to redirect to patient.html
 function redirectToPatientInfo() {
-    window.location.href = 'patient.html';
+    axios.get('/patients')
+        .then(function(response) {
+            var patients = response.data;
+            var queryString = '?patients=' + encodeURIComponent(JSON.stringify(patients));
+            window.location.href = 'patient.html' + queryString;
+        })
+        .catch(function(error) {
+            console.error('Error fetching patients:', error);
+            alert('Failed to redirect to patient info. Please try again.');
+        });
 }
 
 // Attach redirectToPatientInfo function to the click event of the button
@@ -283,36 +292,55 @@ document.addEventListener('DOMContentLoaded', function() {
     redirectButton.addEventListener('click', redirectToPatientInfo);
 });  
 
-// Function to display patient data based on selected template
+
+
+// Fonction pour afficher les données du client en fonction du modèle sélectionné
 function displayPatientData() {
-    var id = document.getElementById('display-patient-select').value;
+    var patientId = document.getElementById('display-patient-select').value;
     var template = document.getElementById('display-template-select').value;
     var displayInfo = document.getElementById('display-info');
 
-    // Clear previous content
+    // Effacer le contenu précédent
     displayInfo.innerHTML = '';
 
-    // Fetch patient data based on selected template
-    axios.get('/api/data', {
-        params: {
-            patientId: id,
-            template: template
-        }
-    })
-    .then(function(response) {
-        // Display the received data in the appropriate section of the page
-        displayInfo.innerHTML = response.data;
-    })
-    .catch(function(error) {
-        console.error('Error fetching patient data:', error);
-        displayInfo.innerHTML = 'Error fetching patient data';
-    });
+    // Vérifier si un modèle a été sélectionné avant de récupérer les données du client
+    if (patientId && template) {
+        // Récupérer les données du client pour le modèle sélectionné
+        axios.get('/api/data', {
+            params: {
+                patientId: patientId,
+                template: template
+            }
+        })
+        .then(function(response) {
+            // Afficher les données reçues dans la section appropriée de la page
+            displayInfo.innerHTML = JSON.stringify(response.data);
+            
+        })
+        .catch(function(error) {
+            console.error('Erreur lors de la récupération des données du client:', error);
+            console.log('Error response:', error.response); // Ajout de cette ligne pour afficher la réponse d'erreur complète
+            displayInfo.innerHTML = 'Erreur lors de la récupération des données du client';
+        });
+    }
 }
 
-// Add event listener for select elements
+
+// Ajouter un écouteur d'événements pour le bouton de déclenchement
 document.addEventListener('DOMContentLoaded', function() {
-    var selects = document.querySelectorAll('select[id$="-patient-select"]');
-    selects.forEach(function(select) {
-        select.addEventListener('change', displayPatientData);
-    });
+    var button = document.getElementById('redirect-button');
+    button.addEventListener('click', displayPatientData);
 });
+
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('display-button').addEventListener('click', displayPatientData);
+});
+
+
+// Function to refresh patient data whenever index.html or patient.html is loaded
+function refreshOnPageLoad() {
+    refreshPatients(); // Call the function to refresh patient data
+}
+
+// Call the refreshOnPageLoad function when the DOM content is loaded
+document.addEventListener('DOMContentLoaded', refreshOnPageLoad);
