@@ -476,6 +476,7 @@ def list_blood_pressures(patient_id):
         })
 
     return result
+ 
 def list_blood_sugars(patient_id):
     result = []
 
@@ -577,17 +578,17 @@ def get_client_data():
         data = {}
         if template == 'temperature':
             data = list_temperatures(patient_id)
-        elif template == 'blood_pressures':
+        elif template == 'blood-pressure':
             data = list_blood_pressures(patient_id)
-        elif template == 'blood_sugars':
+        elif template == 'blood-sugar':
             data = list_blood_sugars(patient_id)
-        elif template == 'medications':
+        elif template == 'medication':
             data = list_medications(patient_id)
-        elif template == 'food_journals':
+        elif template == 'alimentation':
             data = list_food_journals(patient_id)
-        elif template == 'physical_activities':
+        elif template == 'physical-activity':
             data = list_physical_activities(patient_id)
-        elif template == 'appointments':
+        elif template == 'appointment':
             data = list_appointments(patient_id)
         elif template == 'vaccinations':
             data = list_vaccinations(patient_id)
