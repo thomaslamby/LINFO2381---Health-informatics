@@ -298,14 +298,15 @@ def record_vaccination():
     body = json.loads(request.get_data())
     now = datetime.datetime.now().isoformat()
 
-    vaccination_id = client.addDocument('ehr', {
+    client.addDocument('ehr', {
         'type': 'vaccination',
         'patient_id': body['id'],
         'vaccine_name': body['vaccine_name'],
         'date': body['date'],
         'dose_number': body['dose_number'],
         'current_state': body.get('current_state', 'default_state'),
-        'remarks': body.get('remarks', '')
+        'remarks': body.get('remarks', ''),
+        'time' : now,
     })
 
     return Response('', 204)
@@ -571,7 +572,6 @@ def list_appointments(patient_id):
         })
 
     return result
-
 def list_vaccinations(patient_id):
     result = []
 
