@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
-
 import datetime
 import json
 from flask import jsonify
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 
 ##
@@ -281,7 +280,7 @@ def record_physical_activity():
 @app.route('/record-appointment', methods = [ 'POST' ])
 def record_appointment():
     body = json.loads(request.get_data())
-    now = datetime.now().isoformat()
+    now = datetime.datetime.now().isoformat()
 
     client.addDocument('ehr', {
         'type' : 'appointment',
@@ -572,6 +571,7 @@ def list_appointments(patient_id):
         })
 
     return result
+
 def list_vaccinations(patient_id):
     result = []
 
@@ -633,12 +633,12 @@ def get_appointments_week():
     return jsonify(appointments_week)
 
 def list_appointments_today():
-    today = datetime.now().date()
+    today = datetime.datetime.now().date()
     appointments_today = client.executeView('ehr', 'appointments', 'appointments_by_date', key=today.isoformat())
     return appointments_today
 
 def list_appointments_week():
-    today = datetime.now().date()
+    today = datetime.datetime.now().date()
     end_of_week = today + timedelta(days=7)
     appointments_week = client.executeView('ehr', 'appointments', 'appointments_by_date_range')
     return appointments_week
