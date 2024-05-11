@@ -508,7 +508,6 @@
                     autocomplete="off"
                   />
                 </div>
-
               </div>
               <div class="form-group row">
                 <div class="col-sm-6 py-2">
@@ -537,9 +536,47 @@
       </div>
 
       <div class="collapse multi-collapse" id="multiCollapseExample3">
-        <div class="card card-body" id="2">Work in progress</div>
-      </div>
+        <div class="card card-body">
+          <p class="lead">
+            First, select the patient you want to display data for
+          </p>
+          <select
+            class="form-select"
+            aria-label="Default select example"
+            id="display-patient-select"
+            autocomplete="off"
+          ></select>
+        </div>
+        <div style="padding-bottom: 20px"></div>
+        <div id="selectDataToDisplay" style="display: none">
+          <div class="card card-body">
+            <p class="lead">
+              Then, select the type of data you want to display
+            </p>
+            <select
+              class="form-select"
+              aria-label="Default select example"
+              id="selectDataDisplay"
+              autocomplete="off"
+            >
+              <option selected>Select data to display</option>
+              <option value="1">Temperature</option>
+              <option value="2">Blood presure</option>
+              <option value="3">Blood sugare</option>
+              <option value="4">Medication</option>
+              <option value="5">Alimentation</option>
+              <option value="6">Physical activity</option>
+              <option value="7">Vaccination</option>
+              <option value="8">Appointment</option>
+            </select>
+          </div>
+          <div style="padding-bottom: 20px"></div>
 
+          <div class="card card-body" id="tableData" style="display: none">
+            <!-- Data will be displayed here -->
+          </div>
+        </div>
+      </div>
       <div id="alertDiv" style="width: 100%"></div>
     </div>
 

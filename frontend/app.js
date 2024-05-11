@@ -341,6 +341,78 @@ function recordAppointment() {
   }
 }
 
+function displayPatientData() {
+  var patientId = document.getElementById("display-patient-select").value;
+  var template = document.getElementById("selectDataDisplay").value;
+
+  // Vérifier si un modèle a été sélectionné avant de récupérer les données du client
+  if (patientId && template) {
+    // Récupérer les données du client pour le modèle sélectionné
+    axios
+      .get("/api/data", {
+        params: {
+          patientId: patientId,
+          template: template,
+        },
+      })
+      .then(function (response) {
+        // Afficher les données reçues dans la section appropriée de la page
+        // console.log("client data: ", response.data);
+        var tableData = document.getElementById("tableData");
+        tableData.innerHTML = ""; // Empty the tableData element
+
+        if (response.data.length === 0) {
+          showAlert("warning", "No data found for the selected patient", 3000);
+          tableData.innerHTML = `
+            <p class="lead">
+                No data found for the selected patient
+            </p>
+        `;
+          return;
+        }
+
+        var table = document.createElement("table");
+        var thead = document.createElement("thead");
+        var tbody = document.createElement("tbody");
+
+        table.className = "table table-striped";
+
+        // Create the table headers
+        var firstItem = response.data[0];
+        var tr = document.createElement("tr");
+        for (var key in firstItem) {
+          var th = document.createElement("th");
+          th.textContent = key;
+          th.scope = "col";
+          tr.appendChild(th);
+        }
+        thead.appendChild(tr);
+
+        // Create the table body
+        response.data.forEach(function (item) {
+          var tr = document.createElement("tr");
+          for (var key in item) {
+            var td = document.createElement("td");
+            td.textContent = item[key];
+            tr.appendChild(td);
+          }
+          tbody.appendChild(tr);
+        });
+
+        table.appendChild(thead);
+        table.appendChild(tbody);
+        tableData.appendChild(table);
+        showAlert("success", "Data retrieved successfully", 3000);
+      })
+      .catch(function (error) {
+        console.error("Error while retriving the client data:", error);
+        showAlert("danger", "Error while retreving the data", 3000);
+      });
+  } else {
+    showAlert("danger", "Please select a patient and a data to display", 3000);
+  }
+}
+
 function toggleForms(id) {
   // Loop through all the collapsible elements
   for (let i = 1; i <= 3; i++) {
@@ -390,7 +462,7 @@ var selectDataToAdd = document.getElementById("selectDataToAdd");
 // Add event listener
 patientSelect.addEventListener("change", function () {
   // Check if a user is selected
-  if (this.value && this.value !== '"Select a patient') {
+  if (this.value && this.value !== "Select a patient") {
     // Make selectDataToAdd visible
     selectDataToAdd.style.display = "block";
   } else {
@@ -404,7 +476,7 @@ var selectData = document.getElementById("selectData");
 // Add event listener
 selectData.addEventListener("change", function () {
   // Check if a user is selected
-  if (this.value && this.value !== '"Select data to add') {
+  if (this.value && this.value !== "Select data to add") {
     for (var i = 1; i < selectData.length; i++) {
       if (selectData.options[i].value == this.value) {
         document.getElementById(i).style.display = "block";
@@ -416,6 +488,36 @@ selectData.addEventListener("change", function () {
     }
   } else {
     console.log("No data selected");
+  }
+});
+
+var patientSelectDisplay = document.getElementById("display-patient-select");
+var selectDataToDisplay = document.getElementById("selectDataToDisplay");
+
+// Add event listener
+patientSelectDisplay.addEventListener("change", function () {
+  // Check if a user is selected
+  if (this.value && this.value !== "Select a patient") {
+    // Make selectDataToDisplay visible
+    selectDataToDisplay.style.display = "block";
+  } else {
+    // Hide selectDataToDisplay
+    selectDataToDisplay.style.display = "none";
+  }
+});
+
+var selectDataDisplay = document.getElementById("selectDataDisplay");
+var tableData = document.getElementById("tableData");
+
+// Add event listener
+selectDataDisplay.addEventListener("change", function () {
+  // Check if a user is selected
+  if (this.value && this.value !== "Select data to display") {
+    tableData.style.display = "block";
+    displayPatientData();
+  } else {
+    tableData.style.display = "none";
+    //console.log("No data selected");
   }
 });
 

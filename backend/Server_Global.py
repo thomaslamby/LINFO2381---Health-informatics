@@ -606,29 +606,33 @@ def list_vaccinations(patient_id):
 def get_client_data():
     patient_id = request.args.get('patientId')
     template = request.args.get('template')
+    print("patientId: ", patient_id,"Template: ", template)
 
     if patient_id:
         # Fetch data based on patient ID
+        print("Yeah boy in the if")
         data = {}
-        if template == 'temperature':
-            data = list_temperatures(patient_id)
-        elif template == 'blood-pressure':
-            data = list_blood_pressures(patient_id)
-        elif template == 'blood-sugar':
-            data = list_blood_sugars(patient_id)
-        elif template == 'medication':
-            data = list_medications(patient_id)
-        elif template == 'alimentation':
-            data = list_food_journals(patient_id)
-        elif template == 'physical-activity':
-            data = list_physical_activities(patient_id)
-        elif template == 'appointment':
-            data = list_appointments(patient_id)
-        elif template == 'vaccinations':
-            data = list_vaccinations(patient_id)
-        else:
-            return "Invalid template", 400
-        
+        # switch case, yeah boy
+        match template:
+            case "1":
+                print("Case 1")
+                data = list_temperatures(patient_id)
+            case "2":
+                data = list_blood_pressures(patient_id)
+            case "3":
+                data = list_blood_sugars(patient_id)
+            case "4":
+                data = list_medications(patient_id)
+            case "5":
+                data = list_food_journals(patient_id)
+            case "6":
+                data = list_physical_activities(patient_id)
+            case "7":
+                data = list_vaccinations(patient_id)
+            case "8":
+                data = list_appointments(patient_id)
+            case _:
+                return "Invalid template", 400
         return jsonify(data)
     else:
         return "Invalid patient ID", 400

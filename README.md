@@ -20,4 +20,7 @@ docker run --rm -t -i -p 5984:5984 -e COUCHDB_USER=admin -e COUCHDB_PASSWORD=pas
 python3 Server_Global.py
 ```
 
-3. Once the Flask server is running, it will display the address of the server in the terminal. You can open this address in your browser to access the project.
+3. Once the Flask server is running, it will display the address of the server in the terminal. You can open this address in your browser to access the project. You can access the CouchDB frontend at http://localhost:5984/_utils/. 
+The default login credentials for CouchDB are:
+* Username: admin
+* Password: pasword
