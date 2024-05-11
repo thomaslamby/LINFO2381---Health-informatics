@@ -250,29 +250,294 @@
           </div>
           <div style="padding-bottom: 20px" style="display: none" id="40"></div>
           <div class="card card-body" id="4" style="display: none">
-            Medication
+            <form>
+              <div class="form-group row">
+                <label
+                  for="exampleInputEmail1"
+                  class="col-sm-2 col-form-label py-2"
+                  >Patient medication
+                </label>
+
+                <div class="col-sm-5 py-2">
+                  <input
+                    type="name"
+                    class="form-control"
+                    id="inputPatientMedicationName"
+                    placeholder="Enter patient medication name"
+                    autocomplete="off"
+                  />
+                </div>
+
+                <div class="col-sm-5 py-2">
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="inputPatientMedicationDosage"
+                    placeholder="Enter patient medication dosage in mg/dL"
+                    autocomplete="off"
+                  />
+                </div>
+              </div>
+              <div class="form-group row">
+                <div class="col-sm-6 py-2">
+                  <input
+                    type="name"
+                    class="form-control"
+                    id="inputPatientMedicationFrequency"
+                    placeholder="Enter patient medication frequency"
+                    autocomplete="off"
+                  />
+                </div>
+                <div class="col-sm-6 py-2">
+                  <button
+                    type="submit"
+                    style="width: 100%"
+                    class="btn btn-primary"
+                    onclick="event.preventDefault(); recordMedication();"
+                  >
+                    Submit
+                  </button>
+                </div>
+              </div>
+            </form>
           </div>
           <div style="padding-bottom: 20px" style="display: none" id="50"></div>
           <div class="card card-body" id="5" style="display: none">
-            Alimentation
+            <form>
+              <div class="form-group row">
+                <label
+                  for="exampleInputEmail1"
+                  class="col-sm-2 col-form-label py-2"
+                  >Patient alimentation
+                </label>
+
+                <div class="col-sm-5 py-2">
+                  <input
+                    type="datetime-local"
+                    class="form-control"
+                    id="patientMealTime"
+                    name="meal-time"
+                    autocomplete="off"
+                  />
+                </div>
+
+                <div class="col-sm-5 py-2">
+                  <select
+                    class="form-select"
+                    aria-label="Default select example"
+                    id="patientMealType"
+                    autocomplete="off"
+                  >
+                    <option selected>Select meal type</option>
+                    <option value="1">Breakfast</option>
+                    <option value="2">Dinner</option>
+                    <option value="3">Lunch</option>
+                    <option value="4">Snack</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group row">
+                <div class="col-sm-5 py-2">
+                  <input
+                    type="name"
+                    class="form-control"
+                    id="inputPatientFoodName"
+                    placeholder="Enter patient food"
+                    autocomplete="off"
+                  />
+                </div>
+                <div class="col-sm-5 py-2">
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="inputPatientFoodCalories"
+                    placeholder="Enter patient food calories in Kcal"
+                    autocomplete="off"
+                  />
+                </div>
+                <div class="col-sm-2 py-2">
+                  <button
+                    type="submit"
+                    style="width: 100%"
+                    class="btn btn-primary"
+                    onclick="event.preventDefault(); recordAlimentation();"
+                  >
+                    Submit
+                  </button>
+                </div>
+              </div>
+            </form>
           </div>
           <div style="padding-bottom: 20px" style="display: none" id="60"></div>
           <div class="card card-body" id="6" style="display: none">
-            Physical activity
+            <form>
+              <div class="form-group row">
+                <label
+                  for="exampleInputEmail1"
+                  class="col-sm-2 col-form-label py-2"
+                  >Patient physical activity
+                </label>
+
+                <div class="col-sm-5 py-2">
+                  <input
+                    type="datetime-local"
+                    class="form-control"
+                    id="inputPatientActivityTime"
+                    name="activity-time"
+                    autocomplete="off"
+                  />
+                </div>
+
+                <div class="col-sm-5 py-2">
+                  <select
+                    class="form-select"
+                    aria-label="Default select example"
+                    id="inputPatientActivityType"
+                    autocomplete="off"
+                  >
+                    <option selected>Select activity type</option>
+                    <option value="1">Running</option>
+                    <option value="2">Walking</option>
+                    <option value="3">Cycling</option>
+                    <option value="4">Swimming</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group row">
+                <div class="col-sm-6 py-2">
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="inputPatientActivityDuration"
+                    placeholder="Enter patient physical activity duration in minutes"
+                    autocomplete="off"
+                  />
+                </div>
+                <div class="col-sm-6 py-2">
+                  <button
+                    type="submit"
+                    style="width: 100%"
+                    class="btn btn-primary"
+                    onclick="event.preventDefault(); recordPhysicalActivity();"
+                  >
+                    Submit
+                  </button>
+                </div>
+              </div>
+            </form>
           </div>
           <div style="padding-bottom: 20px" style="display: none" id="70"></div>
           <div class="card card-body" id="7" style="display: none">
-            Vaccination
+            <form>
+              <div class="form-group row">
+                <label
+                  for="exampleInputEmail1"
+                  class="col-sm-2 col-form-label py-2"
+                  >Patient vaccination
+                </label>
+
+                <div class="col-sm-5 py-2">
+                  <input
+                    type="name"
+                    class="form-control"
+                    id="inputPatientVaccinName"
+                    placeholder="Enter patient vaccination name"
+                    autocomplete="off"
+                  />
+                </div>
+
+                <div class="col-sm-5 py-2">
+                  <input
+                    type="datetime-local"
+                    class="form-control"
+                    id="inputPatientVaccinTime"
+                    name="vaccin-time"
+                    autocomplete="off"
+                  />
+                </div>
+              </div>
+              <div class="form-group row">
+                <div class="col-sm-6 py-2">
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="inputPatientVaccinNumber"
+                    placeholder="Enter patient vaccination dose number"
+                    autocomplete="off"
+                  />
+                </div>
+                <div class="col-sm-6 py-2">
+                  <button
+                    type="submit"
+                    style="width: 100%"
+                    class="btn btn-primary"
+                    onclick="event.preventDefault(); recordVaccination();"
+                  >
+                    Submit
+                  </button>
+                </div>
+              </div>
+            </form>
           </div>
           <div style="padding-bottom: 20px" style="display: none" id="80"></div>
           <div class="card card-body" id="8" style="display: none">
-            Appointment
+            <form>
+              <div class="form-group row">
+                <label
+                  for="exampleInputEmail1"
+                  class="col-sm-2 col-form-label py-2"
+                  >Patient appointment
+                </label>
+
+                <div class="col-sm-5 py-2">
+                  <input
+                    type="datetime-local"
+                    class="form-control"
+                    id="inputPatientAppointmentTime"
+                    name="vaccin-time"
+                    autocomplete="off"
+                  />
+                </div>
+
+                <div class="col-sm-5 py-2">
+                  <input
+                    type="name"
+                    class="form-control"
+                    id="inputPatientDoctorName"
+                    placeholder="Enter patient doctor name"
+                    autocomplete="off"
+                  />
+                </div>
+
+              </div>
+              <div class="form-group row">
+                <div class="col-sm-6 py-2">
+                  <input
+                    type="name"
+                    class="form-control"
+                    id="inputPatientAppointmentReason"
+                    placeholder="Enter patient appointment reason"
+                    autocomplete="off"
+                  />
+                </div>
+                <div class="col-sm-6 py-2">
+                  <button
+                    type="submit"
+                    style="width: 100%"
+                    class="btn btn-primary"
+                    onclick="event.preventDefault(); recordAppointment();"
+                  >
+                    Submit
+                  </button>
+                </div>
+              </div>
+            </form>
           </div>
         </div>
       </div>
 
       <div class="collapse multi-collapse" id="multiCollapseExample3">
-        <div class="card card-body" id="2">yaya</div>
+        <div class="card card-body" id="2">Work in progress</div>
       </div>
 
       <div id="alertDiv" style="width: 100%"></div>

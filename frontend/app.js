@@ -45,7 +45,7 @@ function refreshPatients() {
       // Automatically refresh temperatures after fetching patients
       //refreshTemperatures();
     })
-    .catch(function (error) {
+    .catch(function (_error) {
       showAlert("danger", "Error fetching patients", 3000);
     });
 }
@@ -59,12 +59,12 @@ function createPatient() {
       .post("/create-patient", {
         name: name,
       })
-      .then(function (response) {
+      .then(function (_response) {
         document.getElementById("inputPatientName").value = "";
         refreshPatients();
         showAlert("success", "Patient created successfully", 3000);
       })
-      .catch(function (error) {
+      .catch(function (_error) {
         showAlert("danger", "Error creating patient", 3000);
       });
   }
@@ -83,11 +83,11 @@ function recordTemperature() {
         id: id,
         temperature: temperature,
       })
-      .then(function (response) {
+      .then(function (_response) {
         document.getElementById("inputPatientTemperature").value = "";
         showAlert("success", "Temperature recorded successfully", 3000);
       })
-      .catch(function (error) {
+      .catch(function (_error) {
         showAlert("danger", "Error recording temperature", 3000);
       });
   }
@@ -129,7 +129,7 @@ function recordBloodPressure() {
         mean_arterial_pressure: meanArterialPressure,
         pulse_pressure: pulsePressure,
       })
-      .then(function (response) {
+      .then(function (_response) {
         // Réinitialisation des champs après l'enregistrement réussi
         document.getElementById("inputPatientSystolic").value = "";
         document.getElementById("inputPatientDiastolic").value = "";
@@ -137,7 +137,7 @@ function recordBloodPressure() {
         document.getElementById("inputPatientMeanPulse").value = "";
         showAlert("success", "Blood pressure recorded successfully", 3000);
       })
-      .catch(function (error) {
+      .catch(function (_error) {
         // Gestion des erreurs
         showAlert("danger", "Error recording blood pressure", 3000);
       });
@@ -145,25 +145,201 @@ function recordBloodPressure() {
 }
 
 function recordBloodSugar() {
-    var id = document.getElementById('add-patient-select').value;
-    var bloodSugarLevel = parseFloat(document.getElementById('inputPatientSugar').value);
-    if (isNaN(bloodSugarLevel) || bloodSugarLevel === '') {
-        showAlert('danger', 'Please enter a valid blood sugar level', 3000);
-    } else {
-        axios.post('/record-bloodsugar', {
-            id: id,
-            blood_sugar_level: bloodSugarLevel,
-            measurement_type: 'mg/dL' // Assuming measurement type is in mg/dL
-        })
-            .then(function(response) {
-                document.getElementById('inputPatientSugar').value = '';
-                showAlert('success', 'Blood sugar recorded successfully', 3000);
-            })
-            .catch(function(error) {
-                showAlert('danger', 'Error recording blood sugar', 3000);
-            });
-    }
+  var id = document.getElementById("add-patient-select").value;
+  var bloodSugarLevel = parseFloat(
+    document.getElementById("inputPatientSugar").value
+  );
+  if (isNaN(bloodSugarLevel) || bloodSugarLevel === "") {
+    showAlert("danger", "Please enter a valid blood sugar level", 3000);
+  } else {
+    axios
+      .post("/record-bloodsugar", {
+        id: id,
+        blood_sugar_level: bloodSugarLevel,
+        measurement_type: "mg/dL", // Assuming measurement type is in mg/dL
+      })
+      .then(function (_response) {
+        document.getElementById("inputPatientSugar").value = "";
+        showAlert("success", "Blood sugar recorded successfully", 3000);
+      })
+      .catch(function (_error) {
+        showAlert("danger", "Error recording blood sugar", 3000);
+      });
   }
+}
+
+function recordMedication() {
+  var id = document.getElementById("add-patient-select").value;
+  var medicationName = document.getElementById(
+    "inputPatientMedicationName"
+  ).value;
+  var dosage = parseFloat(
+    document.getElementById("inputPatientMedicationDosage").value
+  );
+  var frequency = document.getElementById(
+    "inputPatientMedicationFrequency"
+  ).value;
+  if (
+    isNaN(dosage) ||
+    dosage === "" ||
+    dosage <= 0 ||
+    medicationName === "" ||
+    frequency === ""
+  ) {
+    showAlert("danger", "Please enter valid values", 3000);
+  } else {
+    axios
+      .post("/record-medication", {
+        id: id,
+        medication_name: medicationName,
+        dosage: dosage,
+        frequency: frequency,
+      })
+      .then(function (_response) {
+        document.getElementById("inputPatientMedicationName").value = "";
+        document.getElementById("inputPatientMedicationDosage").value = "";
+        document.getElementById("inputPatientMedicationFrequency").value = "";
+        showAlert("success", "Medication recorded successfully", 3000);
+      })
+      .catch(function (_error) {
+        showAlert("danger", "Error recording medication", 3000);
+      });
+  }
+}
+
+function recordAlimentation() {
+  var id = document.getElementById("add-patient-select").value;
+  var mealTime = document.getElementById("patientMealTime").value;
+  var mealType = document.getElementById("patientMealType").value;
+  var food = document.getElementById("inputPatientFoodName").value;
+  var calories = parseFloat(
+    document.getElementById("inputPatientFoodCalories").value
+  );
+  if (
+    isNaN(calories) ||
+    calories === "" ||
+    calories <= 0 ||
+    mealTime === "" ||
+    mealType === "" ||
+    food === ""
+  ) {
+    showAlert("danger", "Please enter valid values", 3000);
+  } else {
+    axios
+      .post("/record-foodjournal", {
+        id: id,
+        meal_time: mealTime,
+        meal_type: mealType,
+        food: food,
+        calories: calories,
+      })
+      .then(function (_response) {
+        document.getElementById("patientMealTime").value = "";
+        document.getElementById("inputPatientFoodName").value = "";
+        document.getElementById("inputPatientFoodCalories").value = "";
+        //select default meal type
+        document.getElementById("patientMealType").selectedIndex = 0;
+        showAlert("success", "Food journal recorded successfully", 3000);
+      })
+      .catch(function (_error) {
+        //console.log(error);
+        showAlert("danger", "Error recording food journal", 3000);
+      });
+  }
+}
+
+function recordPhysicalActivity() {
+  var id = document.getElementById("add-patient-select").value;
+  var activityTime = document.getElementById("inputPatientActivityTime").value;
+  var activityType = document.getElementById("inputPatientActivityType").value;
+  var duration = parseFloat(
+    document.getElementById("inputPatientActivityDuration").value
+  );
+  if (
+    isNaN(duration) ||
+    duration === "" ||
+    duration <= 0 ||
+    activityTime === "" ||
+    activityType === ""
+  ) {
+    showAlert("danger", "Please enter valid values", 3000);
+  } else {
+    axios
+      .post("/record-physicalactivity", {
+        id: id,
+        activity_type: activityType,
+        duration: duration,
+      })
+      .then(function (_response) {
+        document.getElementById("inputPatientActivityTime").value = "";
+        document.getElementById("inputPatientActivityDuration").value = "";
+        //select default activity type
+        document.getElementById("inputPatientActivityType").selectedIndex = 0;
+        showAlert("success", "Physical activity recorded successfully", 3000);
+      })
+      .catch(function (_error) {
+        showAlert("danger", "Error recording physical activity", 3000);
+      });
+  }
+}
+
+function recordVaccination() {
+  var id = document.getElementById("add-patient-select").value;
+  var vaccineName = document.getElementById("inputPatientVaccinName").value;
+  var vaccineDate = document.getElementById("inputPatientVaccinTime").value;
+  var vaccineDose = document.getElementById("inputPatientVaccinNumber").value;
+
+  if (vaccineName == "" || vaccineDate == "" || isNaN(vaccineDose)) {
+    showAlert("danger", "Please enter valid values", 3000);
+  } else {
+    axios
+      .post("/record-vaccination", {
+        id: id,
+        vaccine_name: vaccineName,
+        date: vaccineDate,
+        dose_number: vaccineDose,
+      })
+      .then(function (_response) {
+        document.getElementById("inputPatientVaccinName").value = "";
+        document.getElementById("inputPatientVaccinTime").value = "";
+        document.getElementById("inputPatientVaccinNumber").value = "";
+        showAlert("success", "Vaccination recorded successfully", 3000);
+      })
+      .catch(function (_error) {
+        //console.error("Error recording vaccination:", error);
+        showAlert("danger", "Error recording vaccination", 3000);
+      });
+  }
+}
+
+function recordAppointment() {
+  var id = document.getElementById("add-patient-select").value;
+  var appointmentTime = document.getElementById(
+    "inputPatientAppointmentTime"
+  ).value;
+  var doctorName = document.getElementById("inputPatientDoctorName").value;
+  var reason = document.getElementById("inputPatientAppointmentReason").value;
+  if (appointmentTime == "" || doctorName == "" || reason == "") {
+    showAlert("danger", "Please enter valid values", 3000);
+  } else {
+    axios
+      .post("/record-appointment", {
+        id: id,
+        appointment_time: appointmentTime,
+        doctor_name: doctorName,
+        reason: reason,
+      })
+      .then(function (_response) {
+        document.getElementById("inputPatientAppointmentTime").value = "";
+        document.getElementById("inputPatientDoctorName").value = "";
+        document.getElementById("inputPatientAppointmentReason").value = "";
+        showAlert("success", "Appointment recorded successfully", 3000);
+      })
+      .catch(function (_error) {
+        showAlert("danger", "Error recording appointment", 3000);
+      });
+  }
+}
 
 function toggleForms(id) {
   // Loop through all the collapsible elements
