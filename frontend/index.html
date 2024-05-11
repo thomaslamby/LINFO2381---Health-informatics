@@ -21,16 +21,16 @@
         class="d-block mx-auto mb-4"
         src="public/HI_logo.png"
         alt=""
-        width="130"
+        width="200"
       />
       <h1 class="display-5 fw-bold text-body-emphasis text-center">
         Medical data Management
       </h1>
       <div class="col-lg-6 mx-auto text-center">
-        <p class="lead mb-4" id="topText" style="display: block;">
+        <p class="lead mb-4" id="topText" style="display: block">
           Select one of the 3 options below to manage your medical data
         </p>
-        <p class="lead" id="noPatientFound" style="display: none;">
+        <p class="lead" id="noPatientFound" style="display: none">
           No patient found, create one to start adding or visualizing data
         </p>
         <div
@@ -84,6 +84,7 @@
                 <button
                   type="submit"
                   class="btn btn-primary"
+                  style="width: 100%"
                   onclick="event.preventDefault(); createPatient();"
                 >
                   Submit
@@ -96,22 +97,185 @@
 
       <div class="collapse multi-collapse" id="multiCollapseExample2">
         <div class="card card-body">
-          SECOND Anim pariatur cliche reprehenderit, enim eiusmod high life
-          accusamus terry richardson ad squid. Nihil anim keffiyeh helvetica,
-          craft beer labore wes anderson cred nesciunt sapiente ea proident.
+          <p class="lead">First, select the patient you want to add data to</p>
+          <select
+            class="form-select"
+            aria-label="Default select example"
+            id="add-patient-select"
+            autocomplete="off"
+          ></select>
+        </div>
+        <div style="padding-bottom: 20px"></div>
+        <div id="selectDataToAdd" style="display: none">
+          <div class="card card-body">
+            <p class="lead">Then, select the type of data you want to add</p>
+            <select
+              class="form-select"
+              aria-label="Default select example"
+              id="selectData"
+              autocomplete="off"
+            >
+              <option selected>Select data to add</option>
+              <option value="1">Temperature</option>
+              <option value="2">Blood presure</option>
+              <option value="3">Blood sugare</option>
+              <option value="4">Medication</option>
+              <option value="5">Alimentation</option>
+              <option value="6">Physical activity</option>
+              <option value="7">Vaccination</option>
+              <option value="8">Appointment</option>
+            </select>
+          </div>
+          <div style="padding-bottom: 20px" style="display: none" id="10"></div>
+          <div class="card card-body" id="1" style="display: none">
+            <form>
+              <div class="form-group row">
+                <label
+                  for="exampleInputEmail1"
+                  class="col-sm-2 col-form-label py-2"
+                  >Patient temperature</label
+                >
+                <div class="col-sm-8 py-2">
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="inputPatientTemperature"
+                    placeholder="Enter patient temperature in Celsius"
+                    autocomplete="off"
+                  />
+                </div>
+                <div class="col-sm-2 py-2">
+                  <button
+                    type="submit"
+                    style="width: 100%"
+                    class="btn btn-primary"
+                    onclick="event.preventDefault(); recordTemperature();"
+                  >
+                    Submit
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div style="padding-bottom: 20px" style="display: none" id="20"></div>
+          <div class="card card-body" id="2" style="display: none">
+            <form>
+              <div class="form-group row">
+                <label
+                  for="exampleInputEmail1"
+                  class="col-sm-2 col-form-label py-2"
+                  >Patient blood presure</label
+                >
+                <div class="col-sm-5 py-2">
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="inputPatientSystolic"
+                    placeholder="Enter patient systolic blood presure"
+                    autocomplete="off"
+                  />
+                </div>
+                <div class="col-sm-5 py-2">
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="inputPatientDiastolic"
+                    placeholder="Enter patient diastolic blood presure"
+                    autocomplete="off"
+                  />
+                </div>
+              </div>
+              <div class="form-group row">
+                <div class="col-sm-5 py-2">
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="inputPatientArterial"
+                    placeholder="Enter patient mean Arterial presure"
+                    autocomplete="off"
+                  />
+                </div>
+                <div class="col-sm-5 py-2">
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="inputPatientMeanPulse"
+                    placeholder="Enter patient mean pulse presure"
+                    autocomplete="off"
+                  />
+                </div>
+                <div class="col-sm-2 py-2">
+                  <button
+                    type="submit"
+                    class="btn btn-primary"
+                    style="width: 100%"
+                    onclick="event.preventDefault(); recordBloodPressure();"
+                  >
+                    Submit
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div style="padding-bottom: 20px" style="display: none" id="30"></div>
+          <div class="card card-body" id="3" style="display: none">
+            <form>
+              <div class="form-group row">
+                <label
+                  for="exampleInputEmail1"
+                  class="col-sm-2 col-form-label py-2"
+                  >Patient blood sugare</label
+                >
+                <div class="col-sm-8 py-2">
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="inputPatientSugar"
+                    placeholder="Enter patient blood sugar level in mg/dL"
+                    autocomplete="off"
+                  />
+                </div>
+                <div class="col-sm-2 py-2">
+                  <button
+                    type="submit"
+                    style="width: 100%"
+                    class="btn btn-primary"
+                    onclick="event.preventDefault(); recordBloodSugar();"
+                  >
+                    Submit
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div style="padding-bottom: 20px" style="display: none" id="40"></div>
+          <div class="card card-body" id="4" style="display: none">
+            Medication
+          </div>
+          <div style="padding-bottom: 20px" style="display: none" id="50"></div>
+          <div class="card card-body" id="5" style="display: none">
+            Alimentation
+          </div>
+          <div style="padding-bottom: 20px" style="display: none" id="60"></div>
+          <div class="card card-body" id="6" style="display: none">
+            Physical activity
+          </div>
+          <div style="padding-bottom: 20px" style="display: none" id="70"></div>
+          <div class="card card-body" id="7" style="display: none">
+            Vaccination
+          </div>
+          <div style="padding-bottom: 20px" style="display: none" id="80"></div>
+          <div class="card card-body" id="8" style="display: none">
+            Appointment
+          </div>
         </div>
       </div>
 
       <div class="collapse multi-collapse" id="multiCollapseExample3">
-        <div class="card card-body">
-          THIRD Anim pariatur cliche reprehenderit, enim eiusmod high life
-          accusamus terry richardson ad squid. Nihil anim keffiyeh helvetica,
-          craft beer labore wes anderson cred nesciunt sapiente ea proident.
-        </div>
+        <div class="card card-body" id="2">yaya</div>
       </div>
 
-      <div style="padding-bottom: 20px"></div>
-      <div id="alertDiv" style="width: 100%; background-color: red;"></div>
+      <div id="alertDiv" style="width: 100%"></div>
     </div>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
