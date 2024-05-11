@@ -4,6 +4,20 @@ function refreshPatients() {
     .then(function (response) {
       var patients = response.data;
       console.log(patients);
+      if (patients.length === 0) {
+        // If there are no patients, disable the other forms
+        toggleForms(1);
+        document.getElementById("multiCollapseButton2").classList.add("disabled");
+        document.getElementById("multiCollapseButton3").classList.add("disabled");
+        document.getElementById("noPatientFound").style.display = "block";
+        document.getElementById("topText").style.display = "none";
+      } else {
+        // If there are patients, enable the other forms
+        document.getElementById("multiCollapseButton2").classList.remove("disabled");
+        document.getElementById("multiCollapseButton3").classList.remove("disabled");
+        document.getElementById("noPatientFound").style.display = "none";
+        document.getElementById("topText").style.display = "block";
+      }
       var patientSelects = document.querySelectorAll(
         'select[id$="-patient-select"]'
       );

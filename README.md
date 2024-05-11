@@ -14,7 +14,7 @@ You need to have Docker and Python3 installed on your machine.
 docker run --rm -t -i -p 5984:5984 -e COUCHDB_USER=admin -e COUCHDB_PASSWORD=password couchdb:3.3.3
 ```
 
-2. Second, start the Flask server using the following command:
+2. Second, from the backend directory start the Flask server using the following command:
 
 ```bash
 python3 Server_Global.py
