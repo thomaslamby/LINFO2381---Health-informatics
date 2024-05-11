@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
-
 import datetime
 import json
+from flask import jsonify
+from datetime import timedelta
 
 
 ##
@@ -97,6 +98,28 @@ function(doc) {
   }
 }
 ''')
+
+# View to query appointments for a specific date
+client.installView('ehr', 'appointments', 'appointments_by_date', '''
+function(doc) {
+    if (doc.type === 'appointment' && doc.appointment_time) {
+        var date = new Date(doc.appointment_time);
+        emit(date.toISOString().substring(0, 10), doc);
+    }
+}
+''')
+
+# View to query appointments within a date range
+client.installView('ehr', 'appointments', 'appointments_by_date_range', '''
+function(doc) {
+    if (doc.type === 'appointment' && doc.appointment_time) {
+        var date = new Date(doc.appointment_time);
+        emit(date.toISOString().substring(0, 10), doc);
+    }
+}
+''')
+
+
 # END STRIP
 
 
@@ -115,6 +138,11 @@ def hello():
 @app.route('/index.html', methods = [ 'GET' ])
 def get_index():
     with open('index.html', 'r') as f:
+        return Response(f.read(), mimetype = 'text/html')
+    
+@app.route('/patient.html', methods = [ 'GET' ])
+def get_patient():
+    with open('patient.html', 'r') as f:
         return Response(f.read(), mimetype = 'text/html')
 
 @app.route('/app.js', methods = [ 'GET' ])
@@ -270,14 +298,15 @@ def record_vaccination():
     body = json.loads(request.get_data())
     now = datetime.datetime.now().isoformat()
 
-    vaccination_id = client.addDocument('ehr', {
+    client.addDocument('ehr', {
         'type': 'vaccination',
         'patient_id': body['id'],
         'vaccine_name': body['vaccine_name'],
         'date': body['date'],
         'dose_number': body['dose_number'],
         'current_state': body.get('current_state', 'default_state'),
-        'remarks': body.get('remarks', '')
+        'remarks': body.get('remarks', ''),
+        'time' : now,
     })
 
     return Response('', 204)
@@ -440,6 +469,180 @@ def list_vaccinations():
         })
 
     return Response(json.dumps(result), mimetype='application/json')
+
+
+def list_temperatures(patient_id):
+    result = []
+
+    temperatures = client.executeView('ehr', 'temperatures', 'by_patient_id', patient_id)
+
+    for temperature in temperatures:
+        result.append({
+            'time': temperature['value']['time'],
+            'temperature': temperature['value']['temperature'],
+        })
+
+    return result
+
+def list_blood_pressures(patient_id):
+    result = []
+
+    blood_pressures = client.executeView('ehr', 'blood_pressures', 'by_patient_id', patient_id)
+
+    for bp in blood_pressures:
+        result.append({
+            'time': bp['value']['time'],
+            'systolic': bp['value']['systolic'],
+            'diastolic': bp['value']['diastolic'],
+            'mean_arterial_pressure': bp['value']['mean_arterial_pressure'],
+            'pulse_pressure': bp['value']['pulse_pressure'],
+        })
+
+    return result
+ 
+def list_blood_sugars(patient_id):
+    result = []
+
+    blood_sugars = client.executeView('ehr', 'blood_sugars', 'by_patient_id', patient_id)
+
+    for bs in blood_sugars:
+        result.append({
+            'time': bs['value']['time'],
+            'blood_sugar_level': bs['value']['blood_sugar_level'],
+            'measurement_type': bs['value']['measurement_type'],
+            'comment': bs['value']['comment'],
+        })
+
+    return result
+
+def list_medications(patient_id):
+    result = []
+
+    medications = client.executeView('ehr', 'medications', 'by_patient_id', patient_id)
+
+    for med in medications:
+        result.append({
+            'time': med['value']['time'],
+            'medication_name': med['value']['medication_name'],
+            'dosage': med['value']['dosage'],
+            'frequency': med['value']['frequency'],
+            'comment': med['value']['comment'],
+        })
+
+    return result
+def list_food_journals(patient_id):
+    result = []
+
+    food_journals = client.executeView('ehr', 'food_journals', 'by_patient_id', patient_id)
+
+    for journal in food_journals:
+        result.append({
+            'time': journal['value']['time'],
+            'meal_time': journal['value']['meal_time'],
+            'meal_type': journal['value']['meal_type'],
+            'food': journal['value']['food'],
+            'calories': journal['value']['calories']
+        })
+
+    return result
+def list_physical_activities(patient_id):
+    result = []
+
+    physical_activities = client.executeView('ehr', 'physical_activities', 'by_patient_id', patient_id)
+
+    for activity in physical_activities:
+        result.append({
+            'time': activity['value']['time'],
+            'activity_type': activity['value']['activity_type'],
+            'duration': activity['value']['duration']
+        })
+
+    return result
+def list_appointments(patient_id):
+    result = []
+
+    appointments = client.executeView('ehr', 'appointments', 'by_patient_id', patient_id)
+
+    for appointment in appointments:
+        result.append({
+            'time': appointment['value']['time'],
+            'appointment_time': appointment['value']['appointment_time'],
+            'doctor_name': appointment['value']['doctor_name'],
+            'reason': appointment['value']['reason']
+        })
+
+    return result
+def list_vaccinations(patient_id):
+    result = []
+
+    vaccinations = client.executeView('ehr', 'vaccinations', 'by_patient_id', patient_id)
+
+    for vaccination in vaccinations:
+        result.append({
+            'time': vaccination['value']['time'],
+            'current_state': vaccination['value']['current_state'],
+            'transition': vaccination['value'].get('transition', ''),
+            'provider': vaccination['value'].get('provider', ''),
+            'patient_id': vaccination['value']['patient_id'],
+            'participations': vaccination['value'].get('participations', []),
+            'workflow_id': vaccination['value'].get('workflow_id', '')
+        })
+
+    return result
+
+# Route pour récupérer les données du client en fonction de l'ID du client et du modèle sélectionné
+@app.route('/api/data')
+def get_client_data():
+    patient_id = request.args.get('patientId')
+    template = request.args.get('template')
+
+    if patient_id:
+        # Fetch data based on patient ID
+        data = {}
+        if template == 'temperature':
+            data = list_temperatures(patient_id)
+        elif template == 'blood-pressure':
+            data = list_blood_pressures(patient_id)
+        elif template == 'blood-sugar':
+            data = list_blood_sugars(patient_id)
+        elif template == 'medication':
+            data = list_medications(patient_id)
+        elif template == 'alimentation':
+            data = list_food_journals(patient_id)
+        elif template == 'physical-activity':
+            data = list_physical_activities(patient_id)
+        elif template == 'appointment':
+            data = list_appointments(patient_id)
+        elif template == 'vaccinations':
+            data = list_vaccinations(patient_id)
+        else:
+            return "Invalid template", 400
+        
+        return jsonify(data)
+    else:
+        return "Invalid patient ID", 400
+
+@app.route('/api/appointments/today')
+def get_appointments_today():
+    appointments_today = list_appointments_today()  # Implement this function
+    return jsonify(appointments_today)
+
+@app.route('/api/appointments/week')
+def get_appointments_week():
+    appointments_week = list_appointments_week()  # Implement this function
+    return jsonify(appointments_week)
+
+def list_appointments_today():
+    today = datetime.datetime.now().date()
+    appointments_today = client.executeView('ehr', 'appointments', 'appointments_by_date', key=today.isoformat())
+    return appointments_today
+
+def list_appointments_week():
+    today = datetime.datetime.now().date()
+    end_of_week = today + timedelta(days=7)
+    appointments_week = client.executeView('ehr', 'appointments', 'appointments_by_date_range')
+    return appointments_week
+
 
 
 if __name__ == '__main__':

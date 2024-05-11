@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Medical Data Display</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+<h1>Medical Data Display</h1>
+
+<!-- Medical Data Display -->
+<h2>Medical Data Display</h2>
+<p>
+    <label for="display-patient-select">Choose a patient:</label>
+    <select id="display-patient-select">
+        <!-- Options will be populated dynamically -->
+    </select>
+</p>
+<p>
+    <label for="display-template-select">Choose a template:</label>
+    <select id="display-template-select">
+        <option value="temperature">Temperature</option>
+        <option value="blood-pressure">Blood Pressure</option>
+        <option value="blood-sugar">Blood Sugar</option>
+        <option value="medication">Medication</option>
+        <option value="alimentation">Alimentation</option>
+        <option value="physical-activity">Physical Activity</option>
+        <option value="appointment">Appointment</option>
+        <option value="vaccinations">Vaccinations</option>
+
+    </select>
+</p>
+
+<div id="display-info">
+    <!-- Information for selected template will be displayed here -->
+</div>
+
+<!-- Button to trigger display -->
+<button id="display-button">Display Data</button>
+
+<button onclick="displayAppointmentsToday()">Display Appointments for Today</button>
+<div id="appointments-today">
+    <!-- Appointments for today will be displayed here -->
+</div>
+
+<button onclick="displayAppointmentsWeek()">Display Appointments for This Week</button>
+<div id="appointments-week">
+    <!-- Appointments for this week will be displayed here -->
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

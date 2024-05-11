@@ -28,7 +28,7 @@ function recordTemperature() {
       })
           .then(function(response) {
               document.getElementById('temperature').value = '';
-              refreshTemperatures();
+              //refreshTemperatures();
           })
           .catch(function(error) {
               alert('URI /record-temperature not properly implemented in Flask');
@@ -229,7 +229,7 @@ function refreshPatients() {
               });
           });
           // Automatically refresh temperatures after fetching patients
-          refreshTemperatures();
+          //refreshTemperatures();
       })
       .catch(function(error) {
           alert('URI /patients not properly implemented in Flask');
@@ -270,82 +270,101 @@ function refreshTemperatures() {
         alert('Error in processing temperatures. Check console for details.');
     });
   }
-  
 
-// Update temperature chart
-function updateTemperatureChart(labels, temperatures) {
-  chart.data.labels = labels;
-  chart.data.datasets[0].data = temperatures;
-  chart.update();
+
+// Function to redirect to patient.html
+function redirectToPatientInfo() {
+    axios.get('/patients')
+        .then(function(response) {
+            var patients = response.data;
+            var queryString = '?patients=' + encodeURIComponent(JSON.stringify(patients));
+            window.location.href = 'patient.html' + queryString;
+        })
+        .catch(function(error) {
+            console.error('Error fetching patients:', error);
+            alert('Failed to redirect to patient info. Please try again.');
+        });
 }
 
-function displayPatientData(id) {
-  var template = document.getElementById('display-template-select').value;
-  var displayInfo = document.getElementById('display-info');
+// Attach redirectToPatientInfo function to the click event of the button
+document.addEventListener('DOMContentLoaded', function() {
+    var redirectButton = document.getElementById('redirect-button');
+    redirectButton.addEventListener('click', redirectToPatientInfo);
+});  
 
-  // Clear previous content
-  displayInfo.innerHTML = '';
 
-  // Fetch patient data based on selected template
-  switch (template) {
-      case 'temperature':
-          axios.get('/temperatures?id=' + id)
-              .then(function(response) {
-                  var data = response.data;
-                  var html = '<ul>';
-                  data.forEach(function(entry) {
-                      html += '<li>' + entry.time + ': ' + entry.temperature + '</li>';
-                  });
-                  html += '</ul>';
-                  displayInfo.innerHTML = html;
-              })
-              .catch(function(error) {
-                  console.error('Error fetching temperature data:', error);
-                  displayInfo.innerHTML = 'Error fetching temperature data';
-              });
-          break;
-      // Add similar handling for other templates
-      default:
-          displayInfo.innerHTML = 'No template selected';
-  }
+
+// Fonction pour afficher les données du client en fonction du modèle sélectionné
+function displayPatientData() {
+    var patientId = document.getElementById('display-patient-select').value;
+    var template = document.getElementById('display-template-select').value;
+    var displayInfo = document.getElementById('display-info');
+
+    // Effacer le contenu précédent
+    displayInfo.innerHTML = '';
+
+    // Vérifier si un modèle a été sélectionné avant de récupérer les données du client
+    if (patientId && template) {
+        // Récupérer les données du client pour le modèle sélectionné
+        axios.get('/api/data', {
+            params: {
+                patientId: patientId,
+                template: template
+            }
+        })
+        .then(function(response) {
+            // Afficher les données reçues dans la section appropriée de la page
+            displayInfo.innerHTML = JSON.stringify(response.data);
+            
+        })
+        .catch(function(error) {
+            console.error('Erreur lors de la récupération des données du client:', error);
+            console.log('Error response:', error.response); // Ajout de cette ligne pour afficher la réponse d'erreur complète
+            displayInfo.innerHTML = 'Erreur lors de la récupération des données du client';
+        });
+    }
 }
 
 
+// Ajouter un écouteur d'événements pour le bouton de déclenchement
+document.addEventListener('DOMContentLoaded', function() {
+    var button = document.getElementById('redirect-button');
+    button.addEventListener('click', displayPatientData);
+});
 
 document.addEventListener('DOMContentLoaded', function() {
-  // Initialize temperature chart
-  chart = new Chart(document.getElementById('temperatures'), {
-      type: 'line',
-      data: {
-          labels: [],
-          datasets: [{
-              label: 'Temperature',
-              data: [],
-              fill: false
-          }]
-      },
-      options: {
-          animation: {
-              duration: 0 // Disable animations
-          },
-          scales: {
-              x: {
-                  ticks: {
-                      // Rotate the X label
-                      maxRotation: 45,
-                      minRotation: 45
-                  }
-              }
-          }
-      }
-  });
-
-  // Populate select elements with patient data
-  refreshPatients();
-
-  // Add event listeners for select elements
-  var selects = document.querySelectorAll('select[id$="-patient-select"]');
-  selects.forEach(function(select) {
-      select.addEventListener('change', refreshTemperatures);
-  });
+    document.getElementById('display-button').addEventListener('click', displayPatientData);
 });
+
+function displayAppointmentsToday() {
+    axios.get('/api/appointments/today')
+    .then(function(response) {
+        // Display appointments for today
+        var appointmentsTodayDiv = document.getElementById('appointments-today');
+        appointmentsTodayDiv.innerHTML = JSON.stringify(response.data);
+    })
+    .catch(function(error) {
+        console.error('Error retrieving appointments for today:', error);
+    });
+}
+
+function displayAppointmentsWeek() {
+    axios.get('/api/appointments/week')
+    .then(function(response) {
+        // Display appointments for this week
+        var appointmentsWeekDiv = document.getElementById('appointments-week');
+        appointmentsWeekDiv.innerHTML = JSON.stringify(response.data);
+    })
+    .catch(function(error) {
+        console.error('Error retrieving appointments for this week:', error);
+    });
+}
+
+
+// Function to refresh patient data whenever index.html or patient.html is loaded
+function refreshOnPageLoad() {
+    refreshPatients(); // Call the function to refresh patient data
+}
+
+// Call the refreshOnPageLoad function when the DOM content is loaded
+document.addEventListener('DOMContentLoaded', refreshOnPageLoad);
