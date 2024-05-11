@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import datetime
 import json
-from flask import jsonify
+from flask import jsonify, send_from_directory
 from datetime import timedelta
 
 
@@ -129,7 +129,7 @@ function(doc) {
 ##
 
 from flask import Flask, Response, request, redirect, url_for
-app = Flask(__name__)
+app = Flask(__name__, static_folder='../')
 
 @app.route('/')
 def hello():
@@ -137,18 +137,29 @@ def hello():
 
 @app.route('/index.html', methods = [ 'GET' ])
 def get_index():
-    with open('index.html', 'r') as f:
+    with open('../frontend/index.html', 'r') as f:
         return Response(f.read(), mimetype = 'text/html')
     
 @app.route('/patient.html', methods = [ 'GET' ])
 def get_patient():
-    with open('patient.html', 'r') as f:
+    with open('../frontend/patient.html', 'r') as f:
         return Response(f.read(), mimetype = 'text/html')
 
 @app.route('/app.js', methods = [ 'GET' ])
 def get_javascript():
-    with open('app.js', 'r') as f:
+    with open('../frontend/app.js', 'r') as f:
         return Response(f.read(), mimetype = 'text/javascript')
+    
+@app.route('/public/<path:path>')
+def send_file(path):
+    print("PUBLIC",app.static_folder, path)
+    return send_from_directory(app.static_folder+"/public", path)
+
+@app.route('/frontend/<path:path>')
+def send_file_front(path):
+    print("FRONTEND",app.static_folder)
+    return send_from_directory(app.static_folder+"/frontend", path)
+
 
 
 ##
@@ -646,4 +657,4 @@ def list_appointments_week():
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
