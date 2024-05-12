@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import datetime
 import json
-from flask import jsonify
+from flask import jsonify, send_from_directory
 from datetime import timedelta
 
 
@@ -129,7 +129,7 @@ function(doc) {
 ##
 
 from flask import Flask, Response, request, redirect, url_for
-app = Flask(__name__)
+app = Flask(__name__, static_folder='../')
 
 @app.route('/')
 def hello():
@@ -137,18 +137,29 @@ def hello():
 
 @app.route('/index.html', methods = [ 'GET' ])
 def get_index():
-    with open('index.html', 'r') as f:
+    with open('../frontend/index.html', 'r') as f:
         return Response(f.read(), mimetype = 'text/html')
     
 @app.route('/patient.html', methods = [ 'GET' ])
 def get_patient():
-    with open('patient.html', 'r') as f:
+    with open('../frontend/patient.html', 'r') as f:
         return Response(f.read(), mimetype = 'text/html')
 
 @app.route('/app.js', methods = [ 'GET' ])
 def get_javascript():
-    with open('app.js', 'r') as f:
+    with open('../frontend/app.js', 'r') as f:
         return Response(f.read(), mimetype = 'text/javascript')
+    
+@app.route('/public/<path:path>')
+def send_file(path):
+    #print("PUBLIC",app.static_folder, path)
+    return send_from_directory(app.static_folder+"/public", path)
+
+@app.route('/frontend/<path:path>')
+def send_file_front(path):
+    #print("FRONTEND",app.static_folder)
+    return send_from_directory(app.static_folder+"/frontend", path)
+
 
 
 ##
@@ -595,29 +606,33 @@ def list_vaccinations(patient_id):
 def get_client_data():
     patient_id = request.args.get('patientId')
     template = request.args.get('template')
+    #print("patientId: ", patient_id,"Template: ", template)
 
     if patient_id:
         # Fetch data based on patient ID
+        #print("Yeah boy in the if")
         data = {}
-        if template == 'temperature':
-            data = list_temperatures(patient_id)
-        elif template == 'blood-pressure':
-            data = list_blood_pressures(patient_id)
-        elif template == 'blood-sugar':
-            data = list_blood_sugars(patient_id)
-        elif template == 'medication':
-            data = list_medications(patient_id)
-        elif template == 'alimentation':
-            data = list_food_journals(patient_id)
-        elif template == 'physical-activity':
-            data = list_physical_activities(patient_id)
-        elif template == 'appointment':
-            data = list_appointments(patient_id)
-        elif template == 'vaccinations':
-            data = list_vaccinations(patient_id)
-        else:
-            return "Invalid template", 400
-        
+        # switch case, yeah boy
+        match template:
+            case "1":
+                #print("Case 1")
+                data = list_temperatures(patient_id)
+            case "2":
+                data = list_blood_pressures(patient_id)
+            case "3":
+                data = list_blood_sugars(patient_id)
+            case "4":
+                data = list_medications(patient_id)
+            case "5":
+                data = list_food_journals(patient_id)
+            case "6":
+                data = list_physical_activities(patient_id)
+            case "7":
+                data = list_vaccinations(patient_id)
+            case "8":
+                data = list_appointments(patient_id)
+            case _:
+                return "Invalid template", 400
         return jsonify(data)
     else:
         return "Invalid patient ID", 400
@@ -646,4 +661,4 @@ def list_appointments_week():
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
