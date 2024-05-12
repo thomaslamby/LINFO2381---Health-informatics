@@ -152,12 +152,12 @@ def get_javascript():
     
 @app.route('/public/<path:path>')
 def send_file(path):
-    print("PUBLIC",app.static_folder, path)
+    #print("PUBLIC",app.static_folder, path)
     return send_from_directory(app.static_folder+"/public", path)
 
 @app.route('/frontend/<path:path>')
 def send_file_front(path):
-    print("FRONTEND",app.static_folder)
+    #print("FRONTEND",app.static_folder)
     return send_from_directory(app.static_folder+"/frontend", path)
 
 
@@ -606,16 +606,16 @@ def list_vaccinations(patient_id):
 def get_client_data():
     patient_id = request.args.get('patientId')
     template = request.args.get('template')
-    print("patientId: ", patient_id,"Template: ", template)
+    #print("patientId: ", patient_id,"Template: ", template)
 
     if patient_id:
         # Fetch data based on patient ID
-        print("Yeah boy in the if")
+        #print("Yeah boy in the if")
         data = {}
         # switch case, yeah boy
         match template:
             case "1":
-                print("Case 1")
+                #print("Case 1")
                 data = list_temperatures(patient_id)
             case "2":
                 data = list_blood_pressures(patient_id)

@@ -3,7 +3,7 @@ function refreshPatients() {
     .get("/patients")
     .then(function (response) {
       var patients = response.data;
-      console.log(patients);
+    //console.log(patients);
       if (patients.length === 0) {
         // If there are no patients, disable the other forms
         toggleForms(1);
